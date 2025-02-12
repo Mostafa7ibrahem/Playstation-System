@@ -1,0 +1,139 @@
+{% extends "base.html" %} {% block content %}
+<h1 class="text-center">إدارة الأجهزة</h1>
+<div class="row mt-4">
+    {% for device_name, details in devices.items() %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ device_name }}</h5>
+                <p class="card-text">السعر: {{ details['rate_per_hour'] }} دولار لكل ساعة</p>
+                <p class="card-text">
+                    حالة الجهاز: 
+                    <span class="badge {% if details['start_time'] %}bg-danger{% else %}bg-success{% endif %}">
+                        {% if details['start_time'] %}محجوز{% else %}متاح{% endif %}
+                    </span>
+                </p>
+                <div class="mb-3">
+                    <label class="form-label">الوقت المتبقي:</label>
+                    <div class="timer-box">
+                        <span id="timer-{{ device_name }}">
+                            {% if details['start_time'] %}
+                                {% if details['reserved_minutes'] is not none %}
+                                    {{ details['reserved_minutes'] // 60 }} ساعة {{ details['reserved_minutes'] % 60 }} دقيقة
+                                {% else %}
+                                    الوقت المفتوح: {{ ((time.time() - details['start_time']) // 3600) }} ساعة {{ ((time.time() - details['start_time']) % 3600) // 60 }} دقيقة
+                                {% endif %}
+                            {% else %}
+                                --:--
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <form method="POST" action="{{ url_for('start_device', device_name=device_name) }}">
+                    <div class="mb-3">
+                        <label for="customer_name" class="form-label">اسم العميل</label>
+                        <input type="text" class="form-control" id="customer_name" name="customer_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reservation_time" class="form-label">مدة الحجز (ساعات:دقائق)</label>
+                        <input type="text" class="form-control" id="reservation_time" name="reservation_time" placeholder="مثال: 1:30" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100" {% if details['start_time'] %}disabled{% endif %}>بدء الجهاز</button>
+                </form>
+                <form method="POST" action="{{ url_for('stop_device', device_name=device_name) }}" class="mt-2 {% if not details['start_time'] %}d-none{% endif %}">
+                    <button type="submit" class="btn btn-danger w-100">إيقاف الحجز</button>
+                </form>
+                <form method="POST" action="{{ url_for('open_end', device_name=device_name) }}" class="mt-2 {% if details['start_time'] %}d-none{% endif %}">
+                    <input type="hidden" name="customer_name" id="hidden_customer_name_{{ device_name }}" value="">
+                    <button type="submit" class="btn btn-primary w-100">وقت مفتوح</button>
+                </form>
+                <div class="mt-2">
+                    <span class="dots" onclick="toggleDeleteButton('{{ device_name }}')">...</span>
+                    <form method="POST" action="{{ url_for('delete_device', device_name=device_name) }}" id="delete-form-{{ device_name }}" class="d-none" onsubmit="return confirmDelete()">
+                        <button type="submit" class="btn btn-warning w-100">حذف الجهاز</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    function confirmDelete() {
+        return confirm("هل أنت متأكد أنك تريد حذف هذا الجهاز؟");
+    }
+
+    function toggleDeleteButton(deviceName) {
+        const deleteForm = document.getElementById(`delete-form-${deviceName}`);
+        if (deleteForm.classList.contains("d-none")) {
+            deleteForm.classList.remove("d-none");
+        } else {
+            deleteForm.classList.add("d-none");
+        }
+    }
+
+    function updateTimer(deviceName, endTime) {
+        const timerElement = document.getElementById(`timer-${deviceName}`);
+        const interval = setInterval(() => {
+            const now = Math.floor(Date.now() / 1000);
+            const remaining = endTime - now;
+            if (remaining <= 0) {
+                clearInterval(interval);
+                timerElement.textContent = "انتهى الوقت!";
+                location.reload();
+            } else {
+                const hours = Math.floor(remaining / 3600);
+                const minutes = Math.floor((remaining % 3600) / 60);
+                timerElement.textContent = `${hours} ساعة ${minutes} دقيقة`;
+            }
+        }, 60000);
+    }
+
+    {% for device_name, details in devices.items() %}
+        {% if details['start_time'] %}
+            {% if details['reserved_minutes'] is not none %}
+                updateTimer("{{ device_name }}", {{ details['start_time'] + details['reserved_minutes'] * 60 }});
+            {% else %}
+                const timerElement = document.getElementById(`timer-{{ device_name }}`);
+                const interval = setInterval(() => {
+                    const now = Math.floor(Date.now() / 1000);
+                    const elapsed = now - {{ details['start_time'] }};
+                    const hours = Math.floor(elapsed / 3600);
+                    const minutes = Math.floor((elapsed % 3600) / 60);
+                    timerElement.textContent = `الوقت المفتوح: ${hours} ساعة ${minutes} دقيقة`;
+                }, 60000);
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    document.querySelectorAll('input[name="customer_name"]').forEach(input => {
+        input.addEventListener('input', function() {
+            const deviceName = this.closest('.card').querySelector('.card-title').textContent;
+            document.getElementById(`hidden_customer_name_${deviceName}`).value = this.value;
+        });
+    });
+</script>
+
+<style>
+    .dots {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #ffc107;
+    }
+    .dots:hover {
+        color: #e0a800;
+    }
+    .d-none {
+        display: none;
+    }
+    .timer-box {
+        padding: 10px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 1.2rem;
+    }
+</style>
+{% endblock %}

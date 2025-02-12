@@ -1,0 +1,57 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    direction: rtl;
+    text-align: right;
+    background-image: url("{{ url_for('static', filename='background.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 20px;
+    color: white; /* تغيير لون النص إذا كانت الخلفية داكنة */
+}
+
+h1 {
+    color: #fff;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* خلفية شبه شفافة لعنوان الصفحة */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: rgba(255, 255, 255, 0.8); /* خلفية شبه شفافة للجدول */
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 12px;
+    text-align: right;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: rgba(242, 242, 242, 0.8); /* خلفية شبه شفافة للصفوف الزوجية */
+}
+
+tr:hover {
+    background-color: rgba(221, 221, 221, 0.8); /* خلفية شبه شفافة عند التحويم */
+}
+
+h2 {
+    color: #4CAF50;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.8); /* خلفية شبه شفافة للأرباح */
+    padding: 10px;
+    border-radius: 5px;
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>حساب الأرباح</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <h1>قائمة الصلاة وحساب الأرباح</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>المرادات</th>
+          <th>رقم الانتهاء</th>
+          <th>العائد (جند)</th>
+          <th>المدة</th>
+          <th>الرقم المستخدم</th>
+          <th>اسم الحمل</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in data %}
+        <tr>
+          <td>{{ item['المرادات'] }}</td>
+          <td>{{ item['رقم الانتهاء'] }}</td>
+          <td>{{ item['العائد (جند)'] }}</td>
+          <td>{{ item['المدة'] }}</td>
+          <td>{{ item['الرقم المستخدم'] }}</td>
+          <td>{{ item['اسم الحمل'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <h2>إجمالي الأرباح اليومية: {{ total_earnings }} جنيه</h2>
+  </body>
+</html>
