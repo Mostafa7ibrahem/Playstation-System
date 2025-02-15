@@ -1,0 +1,64 @@
+{% extends "base.html" %} {% block content %}
+<style>
+  /* تنسيقات لتوسيط الصفحة */
+  .center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* يجعل العنصر يأخذ ارتفاع الصفحة بالكامل */
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* لون خلفية الصفحة */
+  }
+  .login-card {
+    width: 100%;
+    max-width: 400px; /* تحديد عرض البطاقة */
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* إضافة ظل للبطاقة */
+    border-radius: 10px; /* حواف مدورة */
+    background-color: #fff; /* خلفية بيضاء */
+  }
+  .login-card h2 {
+    margin-bottom: 20px; /* تباعد بين العنوان والنموذج */
+    text-align: center; /* توسيط العنوان */
+  }
+  .login-card .form-label {
+    font-weight: bold; /* جعل تسميات الحقول غامقة */
+  }
+  .login-card .btn-primary {
+    width: 100%; /* جعل الزر يأخذ العرض بالكامل */
+    margin-top: 10px; /* تباعد بين الحقول والزر */
+  }
+</style>
+
+<div class="center-container">
+  <div class="login-card">
+    <h2>تسجيل الدخول</h2>
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="mb-3">
+        <label for="username" class="form-label">اسم المستخدم</label>
+        <input
+          type="text"
+          class="form-control"
+          id="username"
+          name="username"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">كلمة المرور</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password"
+          name="password"
+          required
+        />
+      </div>
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

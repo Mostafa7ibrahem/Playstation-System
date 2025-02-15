@@ -1,0 +1,47 @@
+{% extends "base.html" %} {% block content %}
+<h1 class="text-center">التقارير</h1>
+<table class="table table-bordered mt-4">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>الجهاز</th>
+      <th>اسم العميل</th>
+      <th>وقت البدء</th>
+      <th>وقت الانتهاء</th>
+      <th>التكلفة</th>
+      <th>حذف</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for invoice in invoices %}
+    <tr>
+      <td>{{ invoice[0] }}</td>
+      <td>{{ invoice[1] }}</td>
+      <td>{{ invoice[2] }}</td>
+      <td>{{ invoice[3] }}</td>
+      <td>{{ invoice[4] }}</td>
+      <td>{{ invoice[5] }}</td>
+      <td>
+        <form
+          method="POST"
+          action="{{ url_for('delete_invoice', invoice_id=invoice[0]) }}"
+          onsubmit="return confirm('هل أنت متأكد أنك تريد حذف هذه الفاتورة؟')"
+        >
+          <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<form method="POST" action="{{ url_for('delete_all_invoices') }}" class="mt-4">
+  <button
+    type="submit"
+    class="btn btn-danger"
+    onclick="return confirm('هل أنت متأكد أنك تريد حذف جميع الفواتير؟')"
+  >
+    حذف جميع الفواتير
+  </button>
+</form>
+{% endblock %}
